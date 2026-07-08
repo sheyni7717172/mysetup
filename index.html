@@ -91,9 +91,9 @@
   .stat span{font-size:9px; color:var(--faint); text-transform:uppercase; letter-spacing:.08em; font-weight:600; margin-top:4px; display:block;}
 
   /* ---------- trophy strip ---------- */
-  :root{ --t-bronze:#cd8a5e; --t-silver:#c9d3e0; --t-gold:#e8c56a; --t-plat:#dfe7f2; }
+  :root{ --t-bronze:#cd8a5e; --t-silver:#c9d3e0; --t-gold:#e8c56a; --t-plat:#dfe7f2; --t-cent:#8fd8b8; }
   .trophies{
-    display:grid; grid-template-columns:repeat(4,1fr); margin-top:8px;
+    display:grid; grid-template-columns:repeat(5,1fr); margin-top:8px;
     border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--deep);
   }
   .trophy{ padding:11px 6px; text-align:center; border-right:1px solid var(--line); }
@@ -105,6 +105,8 @@
   .d-silver{background:radial-gradient(circle at 35% 30%, #ffffff, var(--t-silver) 60%, #8f99ab);}
   .d-gold{background:radial-gradient(circle at 35% 30%, #ffe9ae, var(--t-gold) 60%, #a9822f);}
   .d-plat{background:radial-gradient(circle at 35% 30%, #ffffff, var(--t-plat) 55%, #97a5c0);}
+  .d-cent{background:radial-gradient(circle at 35% 30%, #d8ffe9, var(--t-cent) 55%, #4c9a74);}
+  .card-cent{position:absolute; top:9px; right:9px; font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.04em; padding:3px 7px; border-radius:5px; backdrop-filter:blur(6px); background:rgba(10,11,15,0.55); border:1px solid rgba(143,216,184,0.5); color:var(--t-cent);}
 
   /* ---------- trophy steppers (modal) ---------- */
   .troph-row{display:grid; grid-template-columns:repeat(3,1fr); gap:9px;}
@@ -315,7 +317,7 @@
     <div class="hello"><em id="uname">Sheyni</em></div>
     <div class="tagline">Chaque platine mérite sa place au coffre.</div>
     <div class="stats">
-      <div class="stat"><b id="stCount">0</b><span>Platines</span></div>
+      <div class="stat"><b id="stCount">0</b><span>Jeux finis</span></div>
       <div class="stat"><b id="stAvg">–</b><span>Moyenne</span></div>
       <div class="stat"><b id="stBest">–</b><span>Top note</span></div>
       <div class="stat"><b id="stHours">–</b><span>Heures</span></div>
@@ -325,6 +327,7 @@
       <div class="trophy"><b><i class="dot d-silver"></i><span id="tSilver" style="all:unset">0</span></b><span>Argent</span></div>
       <div class="trophy"><b><i class="dot d-gold"></i><span id="tGold" style="all:unset">0</span></b><span>Or</span></div>
       <div class="trophy"><b><i class="dot d-plat"></i><span id="tPlat" style="all:unset">0</span></b><span>Platine</span></div>
+      <div class="trophy"><b><i class="dot d-cent"></i><span id="tCent" style="all:unset">0</span></b><span>100 %</span></div>
     </div>
   </header>
 
@@ -414,6 +417,14 @@
     </div>
 
     <div class="field">
+      <label>Type de complétion</label>
+      <select id="fType">
+        <option value="plat">🏆 Platine</option>
+        <option value="cent">✓ 100 % (jeu sans platine)</option>
+      </select>
+    </div>
+
+    <div class="field">
       <label>Jaquette / photo</label>
       <div class="img-row">
         <div id="imgPrev" class="img-preview">🎮</div>
@@ -441,7 +452,7 @@
     </div>
 
     <div class="field">
-      <label>Trophées du jeu <span style="color:var(--faint);text-transform:none;letter-spacing:0;font-weight:500;">(le platine compte automatiquement)</span></label>
+      <label>Trophées du jeu <span style="color:var(--faint);text-transform:none;letter-spacing:0;font-weight:500;">(le platine est compté selon le type)</span></label>
       <div class="troph-row">
         <div class="troph-box">
           <div class="tlab"><i class="dot d-bronze" style="width:8px;height:8px;border-radius:50%;display:inline-block;"></i>Bronze</div>
@@ -508,9 +519,13 @@ document.getElementById('sortSelect').addEventListener('change', renderGrid);
 
 function refresh(){ renderStats(); renderJewel(); renderGrid(); }
 
+function isCent(g){ return g.type==='cent'; }
 function trophyTotals(){
-  const t={bronze:0,silver:0,gold:0,plat:games.length};
-  games.forEach(g=>{ t.bronze+=parseInt(g.bronze)||0; t.silver+=parseInt(g.silver)||0; t.gold+=parseInt(g.gold)||0; });
+  const t={bronze:0,silver:0,gold:0,plat:0,cent:0};
+  games.forEach(g=>{
+    t.bronze+=parseInt(g.bronze)||0; t.silver+=parseInt(g.silver)||0; t.gold+=parseInt(g.gold)||0;
+    if(isCent(g)) t.cent++; else t.plat++;
+  });
   t.total=t.bronze+t.silver+t.gold+t.plat;
   return t;
 }
@@ -533,6 +548,7 @@ function renderStats(){
   document.getElementById('tSilver').textContent=t.silver;
   document.getElementById('tGold').textContent=t.gold;
   document.getElementById('tPlat').textContent=t.plat;
+  document.getElementById('tCent').textContent=t.cent;
 }
 
 function renderStatsTab(){
@@ -544,12 +560,13 @@ function renderStatsTab(){
   document.getElementById('sTotal').textContent=t.total;
 
   // rarity bars
-  const rmax=Math.max(t.bronze,t.silver,t.gold,t.plat,1);
+  const rmax=Math.max(t.bronze,t.silver,t.gold,t.plat,t.cent,1);
   const rows=[
     ['Bronze', t.bronze, 'var(--t-bronze)', 'd-bronze'],
     ['Argent', t.silver, 'var(--t-silver)', 'd-silver'],
     ['Or', t.gold, 'var(--t-gold)', 'd-gold'],
     ['Platine', t.plat, 'var(--t-plat)', 'd-plat'],
+    ['100 %', t.cent, 'var(--t-cent)', 'd-cent'],
   ];
   document.getElementById('rarityBars').innerHTML=rows.map(([n,v,c,d])=>`
     <div class="rarity-row">
@@ -602,7 +619,7 @@ function renderJewel(){
     <div class="jewel-sheen"></div>
     <div class="jewel-veil"></div>
     <div class="jewel-content">
-      <span class="jewel-crown">♛ Meilleure note</span>
+      <span class="jewel-crown">${isCent(g)?'✓ 100 % · Meilleure note':'♛ Meilleure note'}</span>
       <div class="jewel-name">${esc(g.name)}</div>
       <div class="jewel-meta">
         <span class="jewel-score"><b>${g.note}</b><i>/10</i></span>
@@ -636,8 +653,9 @@ function renderGrid(){
     card.className='card';
     card.onclick=()=>openModal(g.id);
     card.innerHTML=`
-      ${g.image?`<img class="card-img" src="${g.image}">`:`<div class="card-img ph">🏆</div>`}
+      ${g.image?`<img class="card-img" src="${g.image}">`:`<div class="card-img ph">${isCent(g)?'✓':'🏆'}</div>`}
       ${g.diff?`<span class="card-diff" style="color:${DIFF_COLOR[g.diff]||'#fff'}">${g.diff}</span>`:''}
+      ${isCent(g)?`<span class="card-cent">100%</span>`:''}
       <div class="card-body">
         <div class="card-name">${esc(g.name)}</div>
         <div class="card-foot">
@@ -658,8 +676,8 @@ function renderTop(){
     const it=document.createElement('div');
     it.className='top-item r'+(i+1);
     it.onclick=()=>openModal(g.id);
-    const bits=[NOTE_WORDS[g.note]]; if(g.diff)bits.push(g.diff); if(g.hours)bits.push(g.hours+' h');
-    const tt=(parseInt(g.bronze)||0)+(parseInt(g.silver)||0)+(parseInt(g.gold)||0)+1;
+    const bits=[NOTE_WORDS[g.note]]; if(isCent(g))bits.push('100 %'); if(g.diff)bits.push(g.diff); if(g.hours)bits.push(g.hours+' h');
+    const tt=(parseInt(g.bronze)||0)+(parseInt(g.silver)||0)+(parseInt(g.gold)||0)+(isCent(g)?0:1);
     if(tt>1)bits.push(tt+' trophées');
     it.innerHTML=`
       <div class="rank">${i+1}</div>
@@ -689,6 +707,7 @@ function openModal(id){
     document.getElementById('fDate').value=g.date||'';
     document.getElementById('fHours').value=g.hours||'';
     document.getElementById('fDiff').value=g.diff||'';
+    document.getElementById('fType').value=g.type||'plat';
     document.getElementById('fBronze').value=g.bronze||'';
     document.getElementById('fSilver').value=g.silver||'';
     document.getElementById('fGold').value=g.gold||'';
@@ -701,6 +720,7 @@ function openModal(id){
     document.getElementById('fDate').value=new Date().toISOString().slice(0,10);
     document.getElementById('fHours').value='';
     document.getElementById('fDiff').value='';
+    document.getElementById('fType').value='plat';
     document.getElementById('fBronze').value='';
     document.getElementById('fSilver').value='';
     document.getElementById('fGold').value='';
@@ -736,6 +756,7 @@ function saveGame(){
   const date=document.getElementById('fDate').value||'';
   const hours=document.getElementById('fHours').value? parseInt(document.getElementById('fHours').value,10):'';
   const diff=document.getElementById('fDiff').value||'';
+  const type=document.getElementById('fType').value||'plat';
   const bronze=document.getElementById('fBronze').value? Math.max(0,parseInt(document.getElementById('fBronze').value,10)):'';
   const silver=document.getElementById('fSilver').value? Math.max(0,parseInt(document.getElementById('fSilver').value,10)):'';
   const gold=document.getElementById('fGold').value? Math.max(0,parseInt(document.getElementById('fGold').value,10)):'';
@@ -743,10 +764,10 @@ function saveGame(){
   let isNew=false;
   if(id){
     const g=games.find(x=>x.id===id);
-    Object.assign(g,{name,note,date,hours,diff,bronze,silver,gold,image:imgData});
+    Object.assign(g,{name,note,date,hours,diff,type,bronze,silver,gold,image:imgData});
   }else{
     isNew=true;
-    games.push({id:'g_'+Date.now(),name,note,date,hours,diff,bronze,silver,gold,image:imgData,addedAt:Date.now()});
+    games.push({id:'g_'+Date.now(),name,note,date,hours,diff,type,bronze,silver,gold,image:imgData,addedAt:Date.now()});
   }
   save(); closeModal(); refresh();
   const activeTab=document.querySelector('.tab.active').dataset.tab;
@@ -778,7 +799,7 @@ document.getElementById('importInput').addEventListener('change',e=>{
       const arr=Array.isArray(data)?data:data.games;
       if(!Array.isArray(arr)) throw 0;
       if(games.length && !confirm('Remplacer ta collection actuelle ('+games.length+' platines) par le fichier importé ?')) { e.target.value=''; return; }
-      games=arr.map(g=>({id:g.id||'g_'+Math.random().toString(36).slice(2),name:g.name||'Sans nom',note:g.note||5,date:g.date||'',hours:g.hours||'',diff:g.diff||'',bronze:g.bronze||'',silver:g.silver||'',gold:g.gold||'',image:g.image||null,addedAt:g.addedAt||Date.now()}));
+      games=arr.map(g=>({id:g.id||'g_'+Math.random().toString(36).slice(2),name:g.name||'Sans nom',note:g.note||5,date:g.date||'',hours:g.hours||'',diff:g.diff||'',type:g.type||'plat',bronze:g.bronze||'',silver:g.silver||'',gold:g.gold||'',image:g.image||null,addedAt:g.addedAt||Date.now()}));
       save(); refresh(); toast('Collection importée ✦');
     }catch(err){ toast('Fichier invalide'); }
     e.target.value='';
