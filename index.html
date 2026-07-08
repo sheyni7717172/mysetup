@@ -90,6 +90,48 @@
   .stat b{display:block; font-family:'JetBrains Mono', monospace; font-size:19px; font-weight:600; letter-spacing:-0.02em; font-variant-numeric:tabular-nums;}
   .stat span{font-size:9px; color:var(--faint); text-transform:uppercase; letter-spacing:.08em; font-weight:600; margin-top:4px; display:block;}
 
+  /* ---------- trophy strip ---------- */
+  :root{ --t-bronze:#cd8a5e; --t-silver:#c9d3e0; --t-gold:#e8c56a; --t-plat:#dfe7f2; }
+  .trophies{
+    display:grid; grid-template-columns:repeat(4,1fr); margin-top:8px;
+    border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--deep);
+  }
+  .trophy{ padding:11px 6px; text-align:center; border-right:1px solid var(--line); }
+  .trophy:last-child{border-right:none;}
+  .trophy b{display:flex; align-items:center; justify-content:center; gap:6px; font-family:'JetBrains Mono', monospace; font-size:15px; font-weight:600; font-variant-numeric:tabular-nums;}
+  .trophy .dot{width:9px; height:9px; border-radius:50%; flex-shrink:0; box-shadow:inset 0 1px 1px rgba(255,255,255,0.5);}
+  .trophy span{font-size:8.5px; color:var(--faint); text-transform:uppercase; letter-spacing:.08em; font-weight:600; margin-top:4px; display:block;}
+  .d-bronze{background:radial-gradient(circle at 35% 30%, #e8b18b, var(--t-bronze) 60%, #8f5a3a);}
+  .d-silver{background:radial-gradient(circle at 35% 30%, #ffffff, var(--t-silver) 60%, #8f99ab);}
+  .d-gold{background:radial-gradient(circle at 35% 30%, #ffe9ae, var(--t-gold) 60%, #a9822f);}
+  .d-plat{background:radial-gradient(circle at 35% 30%, #ffffff, var(--t-plat) 55%, #97a5c0);}
+
+  /* ---------- trophy steppers (modal) ---------- */
+  .troph-row{display:grid; grid-template-columns:repeat(3,1fr); gap:9px;}
+  .troph-box{border:1px solid var(--line); background:var(--panel); border-radius:10px; padding:10px 8px; text-align:center;}
+  .troph-box .tlab{display:flex; align-items:center; justify-content:center; gap:5px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:8px;}
+  .troph-box input{width:100%; text-align:center; background:var(--deep); border:1px solid var(--line); border-radius:8px; color:var(--text); font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:600; padding:8px 4px;}
+  .troph-box input:focus{outline:none; border-color:var(--plat-lo);}
+
+  /* ---------- stats tab ---------- */
+  .panel-block{border:1px solid var(--line); background:var(--deep); border-radius:14px; padding:16px; margin-bottom:13px;}
+  .panel-title{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); font-weight:600; margin-bottom:14px;}
+  .rarity-row{display:flex; align-items:center; gap:10px; margin-bottom:11px;}
+  .rarity-row:last-child{margin-bottom:0;}
+  .rarity-name{display:flex; align-items:center; gap:7px; width:86px; font-size:12px; font-weight:600; color:var(--muted); flex-shrink:0;}
+  .rarity-bar{flex:1; height:8px; border-radius:5px; background:var(--panel-2); overflow:hidden;}
+  .rarity-fill{height:100%; border-radius:5px; transition:width .5s cubic-bezier(.2,.8,.2,1);}
+  .rarity-num{font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; width:46px; text-align:right; font-variant-numeric:tabular-nums;}
+  .year-list{display:flex; flex-direction:column; gap:9px;}
+  .year-row{display:flex; align-items:center; gap:10px;}
+  .year-label{font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:600; width:44px; color:var(--muted);}
+  .year-bar{flex:1; height:8px; border-radius:5px; background:var(--panel-2); overflow:hidden;}
+  .year-fill{height:100%; border-radius:5px; background:linear-gradient(90deg, var(--plat-lo), var(--plat));}
+  .year-num{font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; width:30px; text-align:right; font-variant-numeric:tabular-nums;}
+  .bigline{display:flex; align-items:baseline; gap:8px;}
+  .bigline b{font-family:'JetBrains Mono',monospace; font-size:30px; font-weight:600; letter-spacing:-0.02em;}
+  .bigline span{font-size:12px; color:var(--muted); font-weight:600;}
+
   /* ---------- crown jewel hero ---------- */
   .jewel-label{
     display:flex; align-items:center; gap:9px; margin:26px 0 12px;
@@ -278,6 +320,12 @@
       <div class="stat"><b id="stBest">–</b><span>Top note</span></div>
       <div class="stat"><b id="stHours">–</b><span>Heures</span></div>
     </div>
+    <div class="trophies">
+      <div class="trophy"><b><i class="dot d-bronze"></i><span id="tBronze" style="all:unset">0</span></b><span>Bronze</span></div>
+      <div class="trophy"><b><i class="dot d-silver"></i><span id="tSilver" style="all:unset">0</span></b><span>Argent</span></div>
+      <div class="trophy"><b><i class="dot d-gold"></i><span id="tGold" style="all:unset">0</span></b><span>Or</span></div>
+      <div class="trophy"><b><i class="dot d-plat"></i><span id="tPlat" style="all:unset">0</span></b><span>Platine</span></div>
+    </div>
   </header>
 
   <div id="jewelWrap">
@@ -288,6 +336,7 @@
   <div class="tabs">
     <div class="tab active" data-tab="collection">Collection</div>
     <div class="tab" data-tab="top10">Top 10</div>
+    <div class="tab" data-tab="stats">Stats</div>
   </div>
 
   <div id="view-collection">
@@ -315,6 +364,30 @@
       <div class="ic">👑</div>
       <b>Pas encore de classement</b>
       Note tes platines pour révéler ton Top 10.
+    </div>
+  </div>
+
+  <div id="view-stats" style="display:none;">
+    <div class="panel-block">
+      <div class="panel-title">Total trophées</div>
+      <div class="bigline"><b id="sTotal">0</b><span>trophées cumulés, toutes raretés</span></div>
+    </div>
+    <div class="panel-block">
+      <div class="panel-title">Répartition par rareté</div>
+      <div id="rarityBars"></div>
+    </div>
+    <div class="panel-block">
+      <div class="panel-title">Platines par année</div>
+      <div id="yearBars" class="year-list"></div>
+    </div>
+    <div class="panel-block">
+      <div class="panel-title">Difficulté des platines</div>
+      <div id="diffBars"></div>
+    </div>
+    <div id="emptyStats" class="empty" style="display:none;">
+      <div class="ic">📊</div>
+      <b>Pas encore de stats</b>
+      Ajoute des platines pour voir tes statistiques.
     </div>
   </div>
 
@@ -368,6 +441,24 @@
     </div>
 
     <div class="field">
+      <label>Trophées du jeu <span style="color:var(--faint);text-transform:none;letter-spacing:0;font-weight:500;">(le platine compte automatiquement)</span></label>
+      <div class="troph-row">
+        <div class="troph-box">
+          <div class="tlab"><i class="dot d-bronze" style="width:8px;height:8px;border-radius:50%;display:inline-block;"></i>Bronze</div>
+          <input type="number" id="fBronze" min="0" step="1" placeholder="0" inputmode="numeric">
+        </div>
+        <div class="troph-box">
+          <div class="tlab"><i class="dot d-silver" style="width:8px;height:8px;border-radius:50%;display:inline-block;"></i>Argent</div>
+          <input type="number" id="fSilver" min="0" step="1" placeholder="0" inputmode="numeric">
+        </div>
+        <div class="troph-box">
+          <div class="tlab"><i class="dot d-gold" style="width:8px;height:8px;border-radius:50%;display:inline-block;"></i>Or</div>
+          <input type="number" id="fGold" min="0" step="1" placeholder="0" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
       <label>Difficulté du platine</label>
       <select id="fDiff">
         <option value="">— Non précisée —</option>
@@ -407,13 +498,22 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   const tab=t.dataset.tab;
   document.getElementById('view-collection').style.display= tab==='collection'?'':'none';
   document.getElementById('view-top10').style.display= tab==='top10'?'':'none';
+  document.getElementById('view-stats').style.display= tab==='stats'?'':'none';
   if(tab==='top10') renderTop();
+  if(tab==='stats') renderStatsTab();
 }));
 
 document.getElementById('searchInput').addEventListener('input', renderGrid);
 document.getElementById('sortSelect').addEventListener('change', renderGrid);
 
 function refresh(){ renderStats(); renderJewel(); renderGrid(); }
+
+function trophyTotals(){
+  const t={bronze:0,silver:0,gold:0,plat:games.length};
+  games.forEach(g=>{ t.bronze+=parseInt(g.bronze)||0; t.silver+=parseInt(g.silver)||0; t.gold+=parseInt(g.gold)||0; });
+  t.total=t.bronze+t.silver+t.gold+t.plat;
+  return t;
+}
 
 function renderStats(){
   document.getElementById('stCount').textContent=games.length;
@@ -428,6 +528,60 @@ function renderStats(){
     document.getElementById('stBest').textContent='–';
     document.getElementById('stHours').textContent='–';
   }
+  const t=trophyTotals();
+  document.getElementById('tBronze').textContent=t.bronze;
+  document.getElementById('tSilver').textContent=t.silver;
+  document.getElementById('tGold').textContent=t.gold;
+  document.getElementById('tPlat').textContent=t.plat;
+}
+
+function renderStatsTab(){
+  const has=games.length>0;
+  document.getElementById('emptyStats').style.display= has?'none':'block';
+  document.querySelectorAll('#view-stats .panel-block').forEach(p=>p.style.display= has?'':'none');
+  if(!has) return;
+  const t=trophyTotals();
+  document.getElementById('sTotal').textContent=t.total;
+
+  // rarity bars
+  const rmax=Math.max(t.bronze,t.silver,t.gold,t.plat,1);
+  const rows=[
+    ['Bronze', t.bronze, 'var(--t-bronze)', 'd-bronze'],
+    ['Argent', t.silver, 'var(--t-silver)', 'd-silver'],
+    ['Or', t.gold, 'var(--t-gold)', 'd-gold'],
+    ['Platine', t.plat, 'var(--t-plat)', 'd-plat'],
+  ];
+  document.getElementById('rarityBars').innerHTML=rows.map(([n,v,c,d])=>`
+    <div class="rarity-row">
+      <span class="rarity-name"><i class="dot ${d}" style="width:9px;height:9px;border-radius:50%;display:inline-block;"></i>${n}</span>
+      <div class="rarity-bar"><div class="rarity-fill" style="width:${(v/rmax*100)}%; background:${c};"></div></div>
+      <span class="rarity-num">${v}</span>
+    </div>`).join('');
+
+  // platines per year
+  const byYear={};
+  games.forEach(g=>{ const y=(g.date||'').slice(0,4)||'—'; byYear[y]=(byYear[y]||0)+1; });
+  const years=Object.keys(byYear).sort().reverse();
+  const ymax=Math.max(...Object.values(byYear),1);
+  document.getElementById('yearBars').innerHTML=years.map(y=>`
+    <div class="year-row">
+      <span class="year-label">${y}</span>
+      <div class="year-bar"><div class="year-fill" style="width:${(byYear[y]/ymax*100)}%"></div></div>
+      <span class="year-num">${byYear[y]}</span>
+    </div>`).join('');
+
+  // difficulty distribution
+  const dOrder=['Facile','Moyen','Difficile','Cauchemar'];
+  const byDiff={};
+  games.forEach(g=>{ if(g.diff) byDiff[g.diff]=(byDiff[g.diff]||0)+1; });
+  const dmax=Math.max(...dOrder.map(d=>byDiff[d]||0),1);
+  const anyDiff=dOrder.some(d=>byDiff[d]);
+  document.getElementById('diffBars').innerHTML= anyDiff? dOrder.filter(d=>byDiff[d]).map(d=>`
+    <div class="rarity-row">
+      <span class="rarity-name" style="color:${DIFF_COLOR[d]}">${d}</span>
+      <div class="rarity-bar"><div class="rarity-fill" style="width:${((byDiff[d]||0)/dmax*100)}%; background:${DIFF_COLOR[d]};"></div></div>
+      <span class="rarity-num">${byDiff[d]||0}</span>
+    </div>`).join('') : '<div style="color:var(--faint);font-size:12.5px;">Renseigne la difficulté de tes platines pour voir la répartition.</div>';
 }
 
 function bestGame(){
@@ -505,6 +659,8 @@ function renderTop(){
     it.className='top-item r'+(i+1);
     it.onclick=()=>openModal(g.id);
     const bits=[NOTE_WORDS[g.note]]; if(g.diff)bits.push(g.diff); if(g.hours)bits.push(g.hours+' h');
+    const tt=(parseInt(g.bronze)||0)+(parseInt(g.silver)||0)+(parseInt(g.gold)||0)+1;
+    if(tt>1)bits.push(tt+' trophées');
     it.innerHTML=`
       <div class="rank">${i+1}</div>
       ${g.image?`<img class="top-img" src="${g.image}">`:`<div class="top-img ph">🏆</div>`}
@@ -533,6 +689,9 @@ function openModal(id){
     document.getElementById('fDate').value=g.date||'';
     document.getElementById('fHours').value=g.hours||'';
     document.getElementById('fDiff').value=g.diff||'';
+    document.getElementById('fBronze').value=g.bronze||'';
+    document.getElementById('fSilver').value=g.silver||'';
+    document.getElementById('fGold').value=g.gold||'';
     imgData=g.image||null; setPrev(g.image);
     document.getElementById('deleteBtn').style.display='block';
   }else{
@@ -542,6 +701,9 @@ function openModal(id){
     document.getElementById('fDate').value=new Date().toISOString().slice(0,10);
     document.getElementById('fHours').value='';
     document.getElementById('fDiff').value='';
+    document.getElementById('fBronze').value='';
+    document.getElementById('fSilver').value='';
+    document.getElementById('fGold').value='';
     setPrev(null);
     document.getElementById('deleteBtn').style.display='none';
   }
@@ -574,17 +736,22 @@ function saveGame(){
   const date=document.getElementById('fDate').value||'';
   const hours=document.getElementById('fHours').value? parseInt(document.getElementById('fHours').value,10):'';
   const diff=document.getElementById('fDiff').value||'';
+  const bronze=document.getElementById('fBronze').value? Math.max(0,parseInt(document.getElementById('fBronze').value,10)):'';
+  const silver=document.getElementById('fSilver').value? Math.max(0,parseInt(document.getElementById('fSilver').value,10)):'';
+  const gold=document.getElementById('fGold').value? Math.max(0,parseInt(document.getElementById('fGold').value,10)):'';
   const id=document.getElementById('editId').value;
   let isNew=false;
   if(id){
     const g=games.find(x=>x.id===id);
-    Object.assign(g,{name,note,date,hours,diff,image:imgData});
+    Object.assign(g,{name,note,date,hours,diff,bronze,silver,gold,image:imgData});
   }else{
     isNew=true;
-    games.push({id:'g_'+Date.now(),name,note,date,hours,diff,image:imgData,addedAt:Date.now()});
+    games.push({id:'g_'+Date.now(),name,note,date,hours,diff,bronze,silver,gold,image:imgData,addedAt:Date.now()});
   }
   save(); closeModal(); refresh();
-  if(document.querySelector('.tab.active').dataset.tab==='top10') renderTop();
+  const activeTab=document.querySelector('.tab.active').dataset.tab;
+  if(activeTab==='top10') renderTop();
+  if(activeTab==='stats') renderStatsTab();
   if(isNew){ sparkle(); toast('Platine ajouté au coffre ✦'); } else { toast('Modifié'); }
 }
 function deleteGame(){
@@ -611,7 +778,7 @@ document.getElementById('importInput').addEventListener('change',e=>{
       const arr=Array.isArray(data)?data:data.games;
       if(!Array.isArray(arr)) throw 0;
       if(games.length && !confirm('Remplacer ta collection actuelle ('+games.length+' platines) par le fichier importé ?')) { e.target.value=''; return; }
-      games=arr.map(g=>({id:g.id||'g_'+Math.random().toString(36).slice(2),name:g.name||'Sans nom',note:g.note||5,date:g.date||'',hours:g.hours||'',diff:g.diff||'',image:g.image||null,addedAt:g.addedAt||Date.now()}));
+      games=arr.map(g=>({id:g.id||'g_'+Math.random().toString(36).slice(2),name:g.name||'Sans nom',note:g.note||5,date:g.date||'',hours:g.hours||'',diff:g.diff||'',bronze:g.bronze||'',silver:g.silver||'',gold:g.gold||'',image:g.image||null,addedAt:g.addedAt||Date.now()}));
       save(); refresh(); toast('Collection importée ✦');
     }catch(err){ toast('Fichier invalide'); }
     e.target.value='';
